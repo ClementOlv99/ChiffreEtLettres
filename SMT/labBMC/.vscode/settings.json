@@ -1,0 +1,8 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.referencedLibraries": [
+        "/mnt/n7fs/ens/tp_dupont/z3/bin/com.microsoft.z3.jar"
+    ]
+}
