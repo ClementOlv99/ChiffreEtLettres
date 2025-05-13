@@ -61,7 +61,7 @@ public class ChiffresTransitionSystem extends TransitionSystem {
         this.minBvRange  = new BigInteger("2").pow(bvBits-1).negate();
 
         // TODO: to complete!
-        this.maxNofSteps = 0;
+        this.maxNofSteps = 5;
 
         this.noOverflows = noOverflows;
     }
@@ -76,9 +76,12 @@ public class ChiffresTransitionSystem extends TransitionSystem {
 
     @Override
     public BoolExpr initialStateFormula() {
-        // TODO: to complete!
+        
+        BoolExpr init = this.context.mkAnd(
+                            this.context.mkEq(cache.idxStateVar(0), context.mkInt(0)), 
+                            this.context.mkEq(cache.stackStateVar(0), /* */));
 
-        return null;
+        return init;
     }
 
     @Override
