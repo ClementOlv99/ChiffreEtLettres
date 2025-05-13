@@ -3,6 +3,8 @@ package fr.n7.smt;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import javax.naming.Context;
+
 import com.microsoft.z3.*;
 
 /**
@@ -76,13 +78,19 @@ public class ChiffresTransitionSystem extends TransitionSystem {
 
     @Override
     public BoolExpr initialStateFormula() {
-        
-        BoolExpr init = this.context.mkAnd(
-                            this.context.mkEq(cache.idxStateVar(0), context.mkInt(0)), 
-                            this.context.mkEq(cache.stackStateVar(0), /* */));
+        // The stack is empty, so all elements in the stack are 0
+        BoolExpr stackEmpty = context.mkTrue();
+        for (int i = 0; i <= maxNofSteps; i++) {
+            BitVecExpr stackElement = (BitVecExpr) context.mkSelect(cache.stackStateVar(0), context.mkInt(i));
+            stackEmpty = context.mkAnd(stackEmpty, context.mkEq(stackElement, context.mkBV(0, bvBits)));
+        }
 
-        return init;
-    }
+        // The stack pointer (idxState) is at 0
+        BoolExpr pointerAtZero = context.mkEq(cache.idxStateVar(0), context.mkInt(0));
+
+        // Combine both conditions
+        return context.mkAnd(stackEmpty, pointerAtZero);
+}
 
     @Override
     public BoolExpr finalStateFormula(int step) {
