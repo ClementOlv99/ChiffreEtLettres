@@ -159,13 +159,13 @@ public class BMC {
      *
      * @param timeout the timeout to use. If negative, no timeout is used
      */
-private Status solveApprox(int timeout) {
+    private Status solveApprox(int timeout) {  
 
         System.out.println("Approximate BMC solver");
         Status status = Status.UNKNOWN; 
         int step = 0;
 
-		while (step <= (maxNOfSteps - 1)) {
+		while (step <= (maxNOfSteps)) {
 
             
             Optimize solver = context.mkOptimize();

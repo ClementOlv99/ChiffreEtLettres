@@ -2,7 +2,7 @@
 # Vous pouvez modifier cette variable d'environnement si vous
 # avez installé Z3 sur votre compte ou sur votre machine
 # personnelle.
-PATH_TO_Z3 = /home/eldercraft/z3-4.11.2-x64-glibc-2.31/bin/
+PATH_TO_Z3 = /mnt/n7fs/ens/tp_dupont/z3/bin
 
 JAVAC = javac
 JAVA = java
