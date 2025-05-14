@@ -1,11 +1,11 @@
 {
-    "java.project.sourcePaths": ["src"],
+    "java.project.sourcePaths": [
+        "src"
+    ],
     "java.project.outputPath": "classes",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        // change the path to your Z3 install if necessary
-        "/mnt/n7fs/ens/tp_dupont/z3/bin/*.jar"
-        ],
+        "/home/eldercraft/z3-4.11.2-x64-glibc-2.31/bin/com.microsoft.z3.jar"
+    ],
     "files.watcherExclude": {
         "**/target": true
     }

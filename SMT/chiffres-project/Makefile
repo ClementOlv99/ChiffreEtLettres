@@ -2,13 +2,13 @@
 # Vous pouvez modifier cette variable d'environnement si vous
 # avez installé Z3 sur votre compte ou sur votre machine
 # personnelle.
-PATH_TO_Z3 = /mnt/n7fs/ens/tp_dupont/z3/bin
+PATH_TO_Z3 = /home/eldercraft/z3-4.11.2-x64-glibc-2.31/bin/
 
 JAVAC = javac
 JAVA = java
 CP_OPTS = -cp $$CLASSPATH:$(PATH_TO_Z3)/com.microsoft.z3.jar
 JAVAC_OPTS = $(CP_OPTS) -d classes
-JAVA_OPTS = $(CP_OPTS):./classes -Djava.library.path=$(PATH_TO_Z3)
+JAVA_OPTS = -Djava.library.path=$(PATH_TO_Z3) $(CP_OPTS):./classes
 SRC_DIR = src/fr/n7/smt
 
 _SRC_FILES = Z3Utils.java BMC.java TransitionSystem.java \
@@ -27,28 +27,31 @@ compile: $(SRC_FILES) | classes
 	$(JAVAC) $(JAVAC_OPTS) $^
 
 run-one-action: compile
-	$(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainOneAction
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainOneAction
 
 run-simple-problem: compile
-	$(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainSimpleProblem
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainSimpleProblem
 
 run-simple-problem-no: compile
-	$(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainSimpleProblemNo
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainSimpleProblemNo
 
 run-simple-problem-overflows: compile
-	$(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainSimpleProblemOverflows
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainSimpleProblemOverflows
 
 run-text: compile
-	$(JAVA) $(JAVA_OPTS) fr.n7.smt.MainTextProblem
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainTextProblem
 
 run-complex: compile
-	$(JAVA) $(JAVA_OPTS) fr.n7.smt.MainComplexProblems
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainComplexProblems
 
 run-approximate: compile
-	$(JAVA) $(JAVA_OPTS) fr.n7.smt.MainComplexProblemApproximate
+	LD_LIBRARY_PATH=$(PATH_TO_Z3):$$LD_LIBRARY_PATH $(JAVA) -ea $(JAVA_OPTS) fr.n7.smt.MainComplexProblemApproximate
 
 classes:
 	mkdir -p $@
 
 clean:
 	- rm -rf classes *.log **/*~
+
+run-all: run-one-action run-simple-problem run-simple-problem-no \
+		run-simple-problem-overflows run-text run-complex 

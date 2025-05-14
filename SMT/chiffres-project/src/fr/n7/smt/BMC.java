@@ -87,13 +87,13 @@ public class BMC {
 
         // return UNSATISFIABLE or SATISFIABLE if in simulation mode
 
-
+        System.out.println("Exact BMC solver");
         Solver solver  = context.mkSolver();
 
         solver.add(system.initialStateFormula());
 
         int step = 0;
-        while(step <= (maxNOfSteps-1)) {
+        while(step <= (maxNOfSteps)) {
             if (!simulation) {
                 solver.push();
                 solver.add(system.finalStateFormula(step));
@@ -112,7 +112,7 @@ public class BMC {
                 case SATISFIABLE:
                     
                     if (!simulation) {
-                        System.out.println("SAT");
+                        System.out.println("SAT at step " + step);
                         system.printModel(solver.getModel(), step);
                         return Status.SATISFIABLE;
                     } else {
@@ -124,7 +124,7 @@ public class BMC {
                
 
                 default:
-                    System.out.println("UNSAT");
+                    System.out.println("UNSAT at step " + step);
                     if (!simulation) {
                         solver.pop();
                         solver.add(system.transitionFormula(step));
@@ -134,8 +134,14 @@ public class BMC {
             }
             step++;
         }
-        Status qf = solver.check();
-        return (qf);
+        
+        if (simulation) {
+            System.out.println("SAT");
+            return Status.SATISFIABLE;
+        } else {
+            System.out.println("UNSAT");
+            return Status.UNSATISFIABLE;
+        }
     }
 
     /**
@@ -153,11 +159,51 @@ public class BMC {
      *
      * @param timeout the timeout to use. If negative, no timeout is used
      */
-    private Status solveApprox(int timeout) {
-        // TODO: to complete!
+private Status solveApprox(int timeout) {
+
+        System.out.println("Approximate BMC solver");
+        Status status = Status.UNKNOWN; 
+        int step = 0;
+
+		while (step <= (maxNOfSteps - 1)) {
+
+            
+            Optimize solver = context.mkOptimize();
+
+			solver.Add(system.initialStateFormula());
+
+			for (int j = 0; j <= step; j++) {
+				solver.Add(system.transitionFormula(j));	
+            }
+            
+
+            solver.Add(context.mkNot(system.finalStateFormula(step + 1)));
+
+
+            solver.MkMinimize(system.finalStateApproxCriterion(step + 1));
+
+			status = solver.Check();
+            
+			if (status == Status.SATISFIABLE) {
+				System.out.println("SAT at step " + step);
+                system.printModel(solver.getModel(), step);
+            } else if (status == Status.UNSATISFIABLE) {
+                System.out.println("UNSAT at step " + step);
+                return Status.UNSATISFIABLE;
+            } else {
+                System.out.println("UNKNOWN at step " + step);
+            } 
+            step++;
+        }
+
+        // Mon ApproxSolver semble marcher mais a une step de la fin il abandonne et renvoie UNSAT alors qu'il y a une solution évidente 
+
 
         return Status.SATISFIABLE;
-    }
+
+        
+    }    
+        
 
     /**
      * Tries to solve the BMC problem using exact resolution and
